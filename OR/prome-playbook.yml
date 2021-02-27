@@ -25,7 +25,9 @@
           #- 192.168.77.140:9100
           - "{{ node_ip }}:9100"
 
-
+  - name: Install Node Exporter
+    include_role:
+      name: cloudalchemy.node-exporter
 
 
 #    roles:
