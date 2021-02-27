@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+  - name: Set a hostname
+    ansible.builtin.hostname:
+      name: prome1
+
+  - name: Set timezone to Kyiv
+    community.general.timezone:
+      name: Europe/Kiev
+
+  - name: Install Prome
+    include_role:
+      name: cloudalchemy.prometheus
+    vars:
+      prometheus_web_listen_address: 0.0.0.0:9090
+      #prometheus_scrape_configs: 
+      #prometheus_db_dir: /data
+      #prometheus_version: 2.25.0
+      prometheus_targets:
+        node:
+        - targets:
+          #- 192.168.77.140:9100
+          - "{{ node_ip }}:9100"
+
+
+
+
+#    roles:
+#    - cloudalchemy.prometheus
+#    vars:
+#    prometheus_targets:
+#      node:
+#      - targets:
+#        - localhost:9100
+
