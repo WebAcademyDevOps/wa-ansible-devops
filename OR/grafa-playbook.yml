@@ -17,3 +17,8 @@
           access: proxy
           url: 'http://{{ node_ip }}:9090'
           basicAuth: false
+      grafana_dashboards:
+        - dashboard_id: 11074
+          revision_id: 1
+          datasource: prometheus
+
