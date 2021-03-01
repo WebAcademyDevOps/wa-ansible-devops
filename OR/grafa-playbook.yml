@@ -30,36 +30,4 @@
       force_basic_auth: true
       method: POST
       body_format: json
-      src: d111-curl-post-import-works.json
-
-  - name: Import grafana dashboards-2
-    uri:
-      url: "http://{{ node_ip }}:3000/api/dashboards/import"
-      user: admin
-      password: "{{ grafana_password }}"
-      force_basic_auth: true
-      method: POST
-      body_format: json
-      body: >
-        {
-          "dashboard": {{ lookup("file", item) | from_json }},
-          "overwrite": true,
-          "message": "Updated by ansible"
-        }
-    no_log: true
-    with_fileglob:
-      - "d111.json"
-
-#  - name: Copy dbrd
-#    ansible.builtin.copy:
-#      src: d111.json
-#      dest: /dashboards/d111.json
-
-  ##"dashboard": {{ lookup("file", item), }},
-  #- name: restart grafana
-  #  become: true
-  #  service:
-  #    name: grafana-server
-  #    state: restarted
-  #  tags:
-  #    - grafana_run
+      src: d111.json
