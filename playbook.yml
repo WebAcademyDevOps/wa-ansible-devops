@@ -11,61 +11,12 @@
     community.general.timezone:
       name: Europe/Kiev
 
-
-  - name: Wait for disk to be available
-    ansible.builtin.wait_for:
-      path: /dev/sdc
-
-  - name: Create a xfs filesystem on disk
-    community.general.filesystem:
-      fstype: xfs
-      dev: /dev/sdc
-
-  - name: Make xfs and mount
-    ansible.posix.mount:
-      path: /data
-      src: /dev/sdc
-      fstype: xfs
-      opts: noatime
-      state: mounted
-
-  - name: Get stats of docker dir
-    ansible.builtin.stat:
-      path: /root/.docker
-    register: dot_docker
-
-  - name: Create dir .docker
-    ansible.builtin.file:
-      path: /root/.docker
-      owner: root
-      group: root
-      state: directory
-      mode: '0755'
-    when: dot_docker.stat.exists == false
-
-  # - name: Copy file with owner and permissions
-  #   ansible.builtin.copy:
-  #     src: /tmp/config.json
-  #     dest: /root/.docker/config.json
-  #     owner: root
-  #     group: root
-  #     mode: '0644'
-  #     remote_src: yes
-
-  - name: Deploy docker auth
-    ansible.builtin.file:
-      path: /root/.docker/config.json
-      owner: root
-      group: root
-      mode: '0644'
-      state: absent
-  # - name: Deploy docker auth
-  #   ansible.builtin.file:
-  #     path: /root/.docker/config.json
-  #     owner: root
-  #     group: root
-  #     mode: '0644'
-  #     state: absent
+  - name: Creates directory
+    file:
+    path: /data
+    state: directory
+    mode: 777
+    recurse: yes
 
   - name: Install Prometheus
     include_role:
@@ -78,3 +29,51 @@
         node:
         - targets:
           - 192.168.50.3:9100
+
+ - name: Install nessesary package
+   apt: 
+       name: apt-transport-https
+       state: present
+       update_cache: yes
+
+ - name: add grafana gpg key
+   shell: curl https://packages.grafana.com/gpg.key | sudo apt-key add -
+
+ - name: add grafana repo 
+   apt_repository:
+     repo: deb https://packages.grafana.com/oss/deb stable main
+     state: present
+     filename: grafana
+
+ - name: Install grafana
+   apt: 
+       name: grafana
+       state: present
+       update_cache: yes
+
+ - name: Enable and start grafana service
+   service:
+     name: grafana-server
+     enabled: yes
+     state: started
+   - name: Set Datasource
+    grafana_datasources:
+   - name: prometheus
+     type: prometheus
+     access: proxy
+     url: 'http://192.168.50.3'
+     basicAuth: false
+
+ - name: Change Grafana User
+   include_role:
+      name: community.grafana.grafana_user
+  community.grafana.grafana_user:
+    url: "http://localhost"
+    url_username: admin
+    url_password: changeme
+    name: "Bruce Wayne"
+    email: batman@gotham.city
+    login: batman
+    password: robin
+    is_admin: true
+    state: present
