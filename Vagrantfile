@@ -9,7 +9,6 @@ Vagrant.configure("2") do |config|
       node.vm.provision "ansible" do |ansible|
         ansible.playbook = "playbook.yml"
       end
-      node.vm.disk :disk, name: "backup", size: "10GB"
 
       node.vm.provider "virtualbox" do |v|
         v.memory = 1024
