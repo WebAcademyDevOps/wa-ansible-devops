@@ -45,7 +45,7 @@
         - name: prometheus
           type: prometheus
           access: proxy
-          url: 'http://192.168.50.2:9090'
+          url: 'http://0.0.0.0:9098'
           basicAuth: false
 
   - name: Change Grafana User

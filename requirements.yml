@@ -4,3 +4,5 @@
   version: 0.22.0
 - src: community.grafana
   version: 1.0.0
+- src: cloudalchemy.grafana
+  version: 0.17.0
