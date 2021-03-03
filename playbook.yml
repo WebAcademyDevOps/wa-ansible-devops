@@ -1,7 +1,10 @@
 ---
 - hosts: all
   become: yes
+  vars_files:
+   - vars.yaml
   tasks:
+
 
   - name: Set a hostname
     ansible.builtin.hostname:
@@ -23,7 +26,7 @@
       name: cloudalchemy.prometheus
     vars:
       prometheus_version: 2.25.0
-      prometheus_web_listen_address: 0.0.0.0:9098
+      prometheus_web_listen_address: "{{ prometheus_ip }}"
       prometheus_db_dir: /data
       prometheus_targets:
         node:
@@ -40,22 +43,22 @@
     vars:
       grafana_security:
         admin_user: admin
-        admin_password: "password"
+        admin_password: "{{grafana_password}}"
       grafana_datasources:
         - name: prometheus
           type: prometheus
           access: proxy
-          url: 'http://0.0.0.0:9098'
+          url: 'http://{{ prometheus_ip }}'
           basicAuth: false
 
   - name: Change Grafana User
     community.grafana.grafana_user:
-      url: "http://192.168.50.2:3000"
+      url: "http://{{ node_ip }}:3000"
       url_username: admin
-      url_password: password
+      url_password: "{{ grafana_password }}"
       name: "Bruce Wayne"
       email: batman@gotham.city
       login: batman
-      password: robin
+      password: "{{ grafana_password_batman }}"
       is_admin: true
       state: present
