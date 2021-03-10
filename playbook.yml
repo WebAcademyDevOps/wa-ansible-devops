@@ -14,17 +14,18 @@
 
   - name: Wait for disk to be available
     ansible.builtin.wait_for:
-      path: /dev/sdc
+      path: /dev/sdb
 
   - name: Create a xfs filesystem on disk
     community.general.filesystem:
       fstype: xfs
-      dev: /dev/sdc
+      dev: /dev/sdb
+      force: yes
 
   - name: Make xfs and mount
     ansible.posix.mount:
       path: /data
-      src: /dev/sdc
+      src: /dev/sdb
       fstype: xfs
       opts: noatime
       state: mounted

@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
       node.vm.provider "virtualbox" do |v|
         v.memory = 1024
         v.cpus = 1
+        v.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
       end
 
     end
@@ -36,6 +37,7 @@ Vagrant.configure("2") do |config|
       node.vm.provider "virtualbox" do |v|
         v.memory = 1024
         v.cpus = 1
+        v.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
       end
 
     end
