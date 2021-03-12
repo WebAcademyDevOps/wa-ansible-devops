@@ -1,0 +1,51 @@
+IMAGE_NAME = "ubuntu/bionic64"
+
+Vagrant.configure("2") do |config|
+    config.ssh.insert_key = true
+
+    config.vm.provider "virtualbox" do |vb|
+        vb.memory = 2024
+        vb.cpus = 2
+        vb.customize [ "modifyvm", :id, "--uart1", "off" ]
+        #vb.customize [ "modifyvm", :id, "--uart2", "off" ]
+        #vb.customize [ "modifyvm", :id, "--uart3", "off" ]
+        #vb.customize [ "modifyvm", :id, "--uart4", "off" ]
+        vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
+        #vb.customize ["modifyvm", :id, "--cableconnected1", "off"]
+    end
+
+    config.vm.define "prome" do |prome|
+        prome.vm.box = IMAGE_NAME
+        #prome.vm.network "private_network", ip: "192.168.40.5"
+        prome.vm.network "public_network", bridge: "Realtek PCIe GbE Family Controller", ip: "192.168.77.140"
+        prome.vm.hostname = "prome"
+        prome.vm.provision "ansible" do |ansible_p|
+            #compatibility_mode = "2.0"
+            ansible_p.playbook = "prome-playbook.yml"
+            ansible_p.extra_vars = {
+                node_ip: "192.168.77.140",
+            }
+        end
+        prome.vm.provision "ansible" do |ansible_g|
+            ansible_g.playbook = "grafa-playbook.yml"
+            ansible_g.extra_vars = {
+                node_ip: "192.168.77.140",
+                grafana_password: ENV['GRAFANA_PASS'],
+            }
+        end
+    end
+
+    #config.vm.define "grafa" do |grafa|
+    #    grafa.vm.box = IMAGE_NAME
+    #    grafa.vm.network "private_network", ip: "192.168.40.15"
+    #    grafa.vm.hostname = "grafa"
+    #    grafa.vm.provision "ansible" do |ansible|
+            #compatibility_mode = "2.0"
+    #       ansible.playbook = "grafa-playbook.yml"
+    #       ansible.extra_vars = {
+    #            node_ip: "192.168.20.20",
+    #        }
+    #    end
+    #end
+	
+end
