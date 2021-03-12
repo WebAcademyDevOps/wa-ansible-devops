@@ -1,1 +1,4 @@
 .vagrant
+/.cache
+/roles
+vars.yaml
