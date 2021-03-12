@@ -1,80 +1,64 @@
 ---
 - hosts: all
   become: yes
+  vars_files:
+   - vars.yaml
   tasks:
+
 
   - name: Set a hostname
     ansible.builtin.hostname:
       name: monitoring
 
   - name: Set timezone to Europe/Kiev
-    community.general.timezone:
+    timezone:
       name: Europe/Kiev
 
-
-  - name: Wait for disk to be available
-    ansible.builtin.wait_for:
-      path: /dev/sdc
-
-  - name: Create a xfs filesystem on disk
-    community.general.filesystem:
-      fstype: xfs
-      dev: /dev/sdc
-
-  - name: Make xfs and mount
-    ansible.posix.mount:
+  - name: Creates directory
+    ansible.builtin.file:
       path: /data
-      src: /dev/sdc
-      fstype: xfs
-      opts: noatime
-      state: mounted
-
-  - name: Get stats of docker dir
-    ansible.builtin.stat:
-      path: /root/.docker
-    register: dot_docker
-
-  - name: Create dir .docker
-    ansible.builtin.file:
-      path: /root/.docker
-      owner: root
-      group: root
       state: directory
-      mode: '0755'
-    when: dot_docker.stat.exists == false
-
-  # - name: Copy file with owner and permissions
-  #   ansible.builtin.copy:
-  #     src: /tmp/config.json
-  #     dest: /root/.docker/config.json
-  #     owner: root
-  #     group: root
-  #     mode: '0644'
-  #     remote_src: yes
-
-  - name: Deploy docker auth
-    ansible.builtin.file:
-      path: /root/.docker/config.json
-      owner: root
-      group: root
-      mode: '0644'
-      state: absent
-  # - name: Deploy docker auth
-  #   ansible.builtin.file:
-  #     path: /root/.docker/config.json
-  #     owner: root
-  #     group: root
-  #     mode: '0644'
-  #     state: absent
+      mode: '777'
+      recurse: yes
 
   - name: Install Prometheus
     include_role:
       name: cloudalchemy.prometheus
     vars:
       prometheus_version: 2.25.0
-      prometheus_web_listen_address: 0.0.0.0:9098
+      prometheus_web_listen_address: "{{ prometheus_ip }}"
       prometheus_db_dir: /data
       prometheus_targets:
         node:
         - targets:
-          - 192.168.50.3:9100
+          - 192.168.50.2:9100
+
+  - name: Install Node Exporter
+    include_role:
+      name: cloudalchemy.node-exporter
+
+  - name: Grafana
+    include_role:
+      name: cloudalchemy.grafana
+    vars:
+      grafana_security:
+        admin_user: admin
+        admin_password: "{{grafana_password}}"
+      grafana_datasources:
+        - name: prometheus
+          type: prometheus
+          access: proxy
+          url: 'http://{{ prometheus_ip }}'
+          basicAuth: false
+
+  - name: Change Grafana User
+    community.grafana.grafana_user:
+      url: "http://{{ node_ip }}:3000"
+      url_username: admin
+      url_password: "{{ grafana_password }}"
+      name: "Bruce Wayne"
+      email: batman@gotham.city
+      login: batman
+      password: "{{ grafana_password_batman }}"
+      is_admin: true
+      state: present
