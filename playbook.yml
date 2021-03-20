@@ -12,22 +12,23 @@
       name: Europe/Kiev
 
 
-  - name: Wait for disk to be available
-    ansible.builtin.wait_for:
-      path: /dev/sdc
+  # - name: Wait for disk to be available
+  #   ansible.builtin.wait_for:
+  #     path: /dev/sdb
 
-  - name: Create a xfs filesystem on disk
-    community.general.filesystem:
-      fstype: xfs
-      dev: /dev/sdc
+  # - name: Create a xfs filesystem on disk
+  #   community.general.filesystem:
+  #     fstype: xfs
+  #     dev: /dev/sdb
+  #     force: yes
 
-  - name: Make xfs and mount
-    ansible.posix.mount:
-      path: /data
-      src: /dev/sdc
-      fstype: xfs
-      opts: noatime
-      state: mounted
+  # - name: Make xfs and mount
+  #   ansible.posix.mount:
+  #     path: /data
+  #     src: /dev/sdb
+  #     fstype: xfs
+  #     opts: noatime
+  #     state: mounted
 
   - name: Get stats of docker dir
     ansible.builtin.stat:
@@ -52,13 +53,13 @@
   #     mode: '0644'
   #     remote_src: yes
 
-  - name: Deploy docker auth
-    ansible.builtin.file:
-      path: /root/.docker/config.json
-      owner: root
-      group: root
-      mode: '0644'
-      state: absent
+  # - name: Deploy docker auth
+  #   ansible.builtin.file:
+  #     path: /root/.docker/config.json
+  #     owner: root
+  #     group: root
+  #     mode: '0644'
+  #     state: absent
   # - name: Deploy docker auth
   #   ansible.builtin.file:
   #     path: /root/.docker/config.json
@@ -71,10 +72,43 @@
     include_role:
       name: cloudalchemy.prometheus
     vars:
-      prometheus_version: 2.25.0
-      prometheus_web_listen_address: 0.0.0.0:9098
+      vaprometheus_version: 2.25.0
+      prometheus_web_listen_address: 0.0.0.0:9090
       prometheus_db_dir: /data
       prometheus_targets:
         node:
-        - targets:
-          - 192.168.50.3:9100
+          - targets:
+            - "{{ node_ip }}:9100"
+
+  - name: Install Grafana
+    include_role:
+      name: cloudalchemy.grafana
+    vars:
+      grafana_security:
+        admin_user: admin
+        admin_password: "{{ grafana_admin_password }}"
+      grafana_datasources:
+        - name: prometheus
+          type: prometheus
+          access: proxy
+          url: 'http://127.0.0.1:9090'
+          basicAuth: false
+      grafana_dashboards:
+        - dashboard_id: 8919
+          revision_id: 1
+          datasource: prometheus
+
+
+
+
+  - name: Set grafana user
+    community.grafana.grafana_user:
+      url: "http://{{ prometheus_ip }}:3000"
+      url_username: admin
+      url_password: "{{ grafana_admin_password }}"
+      name: "{{ grafana_user_name }}"
+      email: "{{ grafana_user_mail }}"
+      login: "{{ grafana_user_login }}"
+      password: "{{ grafana_user_password }}"
+      is_admin: true
+      state: present
