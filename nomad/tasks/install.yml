@@ -32,7 +32,7 @@
   get_url:
       url: "{{ nomad_checksums_url }}"
       dest: "/tmp/nomad_{{ nomad_version }}_SHA256SUMS"
-    
+
 - name: parse nomad file checksum
   shell: |
     set -o pipefail
@@ -42,7 +42,6 @@
     warn: no
   register: nomad_checksum
   changed_when: nomad_checksum.stdout|length > 0
-  
 
 - name: download nomad binary to folder
   ansible.builtin.get_url:

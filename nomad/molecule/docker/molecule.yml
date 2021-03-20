@@ -11,6 +11,14 @@ platforms:
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: docker-alpine
+    image: jfloff/alpine-python
+    pre_build_image: true
+    docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
+    privileged: true
+    #command: python runserver
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro   
 provisioner:
   name: ansible
   inventory:
