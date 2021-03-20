@@ -6,14 +6,14 @@ driver:
 platforms:
   # - name: ubuntu-bionic
   #   box: ubuntu/bionic64
-  # #- name: ubuntu-focal
-  #  # box: ubuntu/focal64
-  #   provider_raw_config_args:
-  #    - "customize [ 'modifyvm', :id, '--uartmode1', 'disconnected' ]"
-  # - name: centos-8
-  #   box: centos/8
-  #   provider_raw_config_args:
-  #     - "customize [ 'modifyvm', :id, '--uartmode1', 'disconnected' ]"
+  - name: ubuntu-focal
+    box: ubuntu/focal64
+    provider_raw_config_args:
+     - "customize [ 'modifyvm', :id, '--uartmode1', 'disconnected' ]"
+  - name: centos-8
+    box: centos/8
+    provider_raw_config_args:
+      - "customize [ 'modifyvm', :id, '--uartmode1', 'disconnected' ]"
   - name: centos-7-x86
     box: jasonc/centos7-32bit
     provider_raw_config_args:
