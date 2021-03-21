@@ -1,4 +1,4 @@
-### **ANSIBLE test nomad role for role creation studing**
+### **ANSIBLE nomad role tesing with molecule and GitHub actions**
 
 
 * Ansible role for nomad install and configure
@@ -7,3 +7,9 @@
 *  bind_addr get from ansible facts
 *  Prometheus metrics that can enable with nomad_telemetry_prometheus variabke
 *  Vagrant test box for nomad role testing 
+*  Role testing with molecule
+*  Vagrant and docker test scenario
+*  Vagrant cross-platform test with centos-x86 box
+*  Docker role test
+*  Test role in GitHub Actions
+*  Testinfra test folders, rights and executables
