@@ -7,6 +7,7 @@
     group: root
     mode: 0644
   notify: restart nomad
+  when: ansible_facts['os_family'] == "Ubuntu"
 
 - name: Copy the nomad config file
   template:

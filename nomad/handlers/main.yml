@@ -8,3 +8,4 @@
     state: restarted
   when:
     - not ansible_check_mode
+    - ansible_facts['os_family'] == "Ubuntu"
