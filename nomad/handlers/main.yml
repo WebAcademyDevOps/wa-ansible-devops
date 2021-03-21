@@ -26,20 +26,24 @@
 
 - name: set runlevel alpine #some magic
   shell: |
+    rc-status
     touch /run/openrc/softlevel
+    sleep 5
   args:
-    executable: /bin/bash
+    executable: /bin/sh
     warn: no
   register: magic
   changed_when: magic.stdout|length != 0
   when:
     - not ansible_check_mode
     - ansible_facts['distribution'] == "Alpine"
+  listen: restart nomad in Alpine
 
-- name: restart nomad in Alpine
+- name: restart service nomad in Alpine
   ansible.builtin.service:
     name: nomad
     state: restarted
   when:
     - not ansible_check_mode
     - ansible_facts['distribution'] == "Alpine"
+  listen: restart nomad in Alpine
