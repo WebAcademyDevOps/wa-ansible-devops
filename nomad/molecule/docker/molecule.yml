@@ -11,6 +11,15 @@ platforms:
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: docker-alpine
+    image: jfloff/alpine-python #dockage/alpine-openrc
+    pre_build_image: false
+    docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
+    privileged: true
+    dockerfile: Dockerfile-alpine
+    command: "/bin/sh -c 'trap : TERM INT; sleep 9999999999d & wait'"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro   
 provisioner:
   name: ansible
   inventory:
