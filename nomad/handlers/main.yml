@@ -3,7 +3,7 @@
 - name: restart nomad
   become: true
   ansible.builtin.service:
-    name: nomad
+    name: nomad.service
     state: restarted
   when:
     - not ansible_check_mode

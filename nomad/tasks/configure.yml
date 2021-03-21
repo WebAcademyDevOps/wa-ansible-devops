@@ -11,8 +11,8 @@
 
 - name: Copy the nomad openrc script
   template:
-    src: nomad
-    dest: /etc/etc/init.d/nomad
+    src: nomad.service
+    dest: /etc/init.d/nomad.service
     owner: root
     group: root
     mode: 0644
