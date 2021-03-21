@@ -6,25 +6,36 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart nomad
+  notify: restart nomad in Ubuntu
   when: ansible_facts['os_family'] == "Ubuntu"
 
 - name: Copy the nomad openrc script
   template:
-    src: nomad.service
-    dest: /etc/init.d/nomad.service
+    src: nomad
+    dest: /etc/init.d/nomad
     owner: root
     group: root
-    mode: 0644
-  notify: restart nomad
+    mode: 0755
+  notify: restart nomad in Alpine
   when: ansible_facts['os_family'] == "Alpine"
 
 
-- name: Copy the nomad config file
+- name: Copy the nomad config file Ubuntu
   template:
     src: base.hcl.j2
     dest: "{{ nomad_conf_dir }}/{{ nomad_conf_file }}"
     owner: root
     group: root
     mode: 0644
-  notify: restart nomad
+  notify: restart nomad in Ubuntu
+  when: ansible_facts['os_family'] == "Ubuntu"
+
+- name: Copy the nomad config file Alpine
+  template:
+    src: base.hcl.j2
+    dest: "{{ nomad_conf_dir }}/{{ nomad_conf_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nomad in Alpine
+  when: ansible_facts['os_family'] == "Alpine"
