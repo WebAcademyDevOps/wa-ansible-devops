@@ -9,6 +9,17 @@
   notify: restart nomad
   when: ansible_facts['os_family'] == "Ubuntu"
 
+- name: Copy the nomad openrc script
+  template:
+    src: nomad
+    dest: /etc/etc/init.d/nomad
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nomad
+  when: ansible_facts['os_family'] == "Alpine"
+
+
 - name: Copy the nomad config file
   template:
     src: base.hcl.j2
