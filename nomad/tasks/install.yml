@@ -63,9 +63,9 @@
 
 - name: unpack nomad binaries
   ansible.builtin.unarchive:
-    src: /tmp/{{ nomad_archive }}
-    dest: /tmp
-    creates: /tmp/nomad
+    src: "/tmp/{{ nomad_archive }}"
+    dest: "/tmp"
+    creates: "/tmp/nomad"
     remote_src: yes
 
 - name: propagate nomad binary

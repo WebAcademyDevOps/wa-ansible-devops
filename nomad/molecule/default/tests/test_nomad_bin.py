@@ -11,5 +11,5 @@ def test_is_nomad_installed(host):
     assert host.file("/usr/bin/nomad").user == "nomad"
 
 def test_is_nomad_executable(host):
-    hello_world_run = host.run("/usr/bin/nomad status")
-    assert 'No running jobs' in hello_world_run.stdout
+    hello_world_run = host.run("/usr/bin/nomad version")
+    assert 'Nomad' in hello_world_run.stdout

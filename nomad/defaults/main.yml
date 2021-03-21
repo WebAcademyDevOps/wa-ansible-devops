@@ -1,6 +1,6 @@
 ---
 # defaults file for nomad
-nomad_version: 1.0.4
+nomad_version: 0.8.7
 nomad_architectures:
   amd64: amd64
   x86_64: amd64

@@ -24,11 +24,22 @@
     - not ansible_check_mode
     - ansible_facts['distribution'] == "Ubuntu"
 
+- name: set runlevel alpine #some magic
+  shell: |
+    touch /run/openrc/softlevel
+  args:
+    executable: /bin/bash
+    warn: no
+  register: magic
+  changed_when: magic.stdout|length != 0
+  when:
+    - not ansible_check_mode
+    - ansible_facts['distribution'] == "Alpine"
 
 - name: restart nomad in Alpine
   ansible.builtin.service:
     name: nomad
-    state: started
+    state: restarted
   when:
     - not ansible_check_mode
     - ansible_facts['distribution'] == "Alpine"

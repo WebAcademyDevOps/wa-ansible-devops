@@ -1,4 +1,4 @@
-FROM dockage/alpine-openrc
+FROM jfloff/alpine-python
 
 RUN apk add bash --no-cache
-RUN apk add python3 --no-cache
+RUN apk add openrc --no-cache
