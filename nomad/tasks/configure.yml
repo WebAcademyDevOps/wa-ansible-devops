@@ -7,7 +7,7 @@
     group: root
     mode: 0644
   notify: restart nomad in Ubuntu
-  when: ansible_facts['os_family'] == "Ubuntu"
+  when: ansible_facts['distribution'] == "Ubuntu"
 
 - name: Copy the nomad openrc script
   template:
@@ -17,7 +17,7 @@
     group: root
     mode: 0755
   notify: restart nomad in Alpine
-  when: ansible_facts['os_family'] == "Alpine"
+  when: ansible_facts['distribution'] == "Alpine"
 
 
 - name: Copy the nomad config file Ubuntu
@@ -28,7 +28,7 @@
     group: root
     mode: 0644
   notify: restart nomad in Ubuntu
-  when: ansible_facts['os_family'] == "Ubuntu"
+  when: ansible_facts['distribution'] == "Ubuntu"
 
 - name: Copy the nomad config file Alpine
   template:
@@ -38,4 +38,4 @@
     group: root
     mode: 0644
   notify: restart nomad in Alpine
-  when: ansible_facts['os_family'] == "Alpine"
+  when: ansible_facts['distribution'] == "Alpine"

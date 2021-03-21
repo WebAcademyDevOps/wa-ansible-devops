@@ -6,6 +6,14 @@
       - zip
     state: latest
 
+# - name: Install openrc on Alpine
+#   ansible.builtin.package:
+#     name:
+#       - openrc
+#     state: latest
+#   when: ansible_facts['distribution'] == "Alpine"
+  
+
 - name: create nomad system group
   group:
     name: "{{ nomad_system_group }}"
@@ -55,9 +63,9 @@
 
 - name: unpack nomad binaries
   ansible.builtin.unarchive:
-    src: "/tmp/{{ nomad_archive }}"
-    dest: "/tmp"
-    creates: "/tmp/nomad"
+    src: /tmp/{{ nomad_archive }}
+    dest: /tmp
+    creates: /tmp/nomad
     remote_src: yes
 
 - name: propagate nomad binary

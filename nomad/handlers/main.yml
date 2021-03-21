@@ -1,6 +1,19 @@
 # handlers file for nomad
 ---
 
+
+# - name: restart nomad in Ubuntu
+#   become: true
+#   systemd:
+#     daemon_reload: true
+#     name: nomad
+#     #state: started
+#     enabled: yes
+#   when:
+#     - not ansible_check_mode
+#     - ansible_facts['distribution'] == "Ubuntu"
+
+
 - name: restart nomad in Ubuntu
   become: true
   systemd:
@@ -9,13 +22,13 @@
     state: restarted
   when:
     - not ansible_check_mode
-    - ansible_facts['os_family'] == "Ubuntu"
+    - ansible_facts['distribution'] == "Ubuntu"
 
 
 - name: restart nomad in Alpine
   ansible.builtin.service:
     name: nomad
-    state: restarted
+    state: started
   when:
     - not ansible_check_mode
-    - ansible_facts['os_family'] == "Alpine"
+    - ansible_facts['distribution'] == "Alpine"
