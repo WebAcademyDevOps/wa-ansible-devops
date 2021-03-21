@@ -1,8 +1,6 @@
 name: Molecule Test
-on:
-  pull_request:
-    branches:
-    - hw12
+on: [push, pull_request]
+  
 
 jobs:
   build:
