@@ -78,3 +78,22 @@
         node:
         - targets:
           - 192.168.50.3:9100
+
+  - name: Install Grafana
+    include_role:
+      name: cloudalchemy.grafana
+    vars: 
+      grafana_security: 
+        { admin_user: admin, admin_password: "{{ admin_password }}"}
+      grafana_database:
+        {type: sqlite3 }
+
+  - name: Create prometheus datasource
+    grafana_datasource:
+      name: openshift_prometheus
+      ds_type: prometheus
+      ds_url: {{ "url_prometheus" }}
+      access: proxy
+      tls_skip_verify: true
+      grafana_url: {{ "url_grafana" }}
+      grafana_api_key: {{ "grafana_api_key" }}
