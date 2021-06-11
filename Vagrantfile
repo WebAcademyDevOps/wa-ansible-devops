@@ -14,11 +14,12 @@ Vagrant.configure("2") do |config|
       node.vm.box_version = "20201210.0.0"
       node.vm.provision "ansible" do |ansible|
         ansible.playbook = "playbook.yml"
+        ansible.verbose  = "vv"
       end
-      node.vm.disk :disk, name: "backup", size: "10GB"
+      node.vm.disk :disk, name: "backup", size: "1GB"
 
       node.vm.provider "virtualbox" do |v|
-        v.memory = 1024
+        v.memory = 512
         v.cpus = 1
       end
 
@@ -34,7 +35,7 @@ Vagrant.configure("2") do |config|
       end
 
       node.vm.provider "virtualbox" do |v|
-        v.memory = 1024
+        v.memory = 512
         v.cpus = 1
       end
 
