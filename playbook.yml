@@ -11,24 +11,6 @@
     community.general.timezone:
       name: Europe/Kiev
 
-
-  - name: Wait for disk to be available
-    ansible.builtin.wait_for:
-      path: /dev/sdc
-
-  - name: Create a xfs filesystem on disk
-    community.general.filesystem:
-      fstype: xfs
-      dev: /dev/sdc
-
-  - name: Make xfs and mount
-    ansible.posix.mount:
-      path: /data
-      src: /dev/sdc
-      fstype: xfs
-      opts: noatime
-      state: mounted
-
   - name: Get stats of docker dir
     ansible.builtin.stat:
       path: /root/.docker
@@ -43,15 +25,6 @@
       mode: '0755'
     when: dot_docker.stat.exists == false
 
-  # - name: Copy file with owner and permissions
-  #   ansible.builtin.copy:
-  #     src: /tmp/config.json
-  #     dest: /root/.docker/config.json
-  #     owner: root
-  #     group: root
-  #     mode: '0644'
-  #     remote_src: yes
-
   - name: Deploy docker auth
     ansible.builtin.file:
       path: /root/.docker/config.json
@@ -59,13 +32,6 @@
       group: root
       mode: '0644'
       state: absent
-  # - name: Deploy docker auth
-  #   ansible.builtin.file:
-  #     path: /root/.docker/config.json
-  #     owner: root
-  #     group: root
-  #     mode: '0644'
-  #     state: absent
 
   - name: Install Prometheus
     include_role:
@@ -73,8 +39,28 @@
     vars:
       prometheus_version: 2.25.0
       prometheus_web_listen_address: 0.0.0.0:9098
-      prometheus_db_dir: /data
+      prometheus_db_dir: /var/lib/prometheus
       prometheus_targets:
         node:
         - targets:
           - 192.168.50.3:9100
+
+  - name: Install Grafana
+    include_role:
+      name: cloudalchemy.grafana
+    vars:
+      grafana_address: 0.0.0.0
+      grafana_port: 3000
+      prometheus_web_listen_address: 127.0.0.1:9098
+      grafana_security:
+        { admin_user: admin, admin_password: "rfhnjxrf67" }
+      grafana_datasources:
+        - name: prometheus
+          type: prometheus
+          access: server
+          url: 'http://{{ prometheus_web_listen_address }}'
+          basicAuth: false
+ #     grafana_dashboards:
+ #       - dashboard_id: 111
+ #         revision_id: 1
+ #         datasource: prometheus
